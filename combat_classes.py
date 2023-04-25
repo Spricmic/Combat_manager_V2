@@ -45,25 +45,20 @@ class Monster:
         self.armor_class = armor_class
         self.hit_points = hit_points
         self.speed = speed
+
         self.strength = 0 if strength == '' else int(strength)
         self.dexterity = 0 if dexterity == '' else int(dexterity)
         self.constitution = 0 if constitution == '' else int(constitution)
         self.intelligence = 0 if intelligence == '' else int(intelligence)
         self.wisdom = 0 if wisdom == '' else int(wisdom)
         self.charisma = 0 if charisma == '' else int(charisma)
+
         self.strength_save = 0 if strength_save == '' else int(strength_save)
         self.dexterity_save = 0 if dexterity_save == '' else int(dexterity_save)
         self.constitution_save = 0 if constitution_save == '' else int(constitution_save)
         self.intelligence_save = 0 if intelligence_save == '' else int(intelligence_save)
         self.wisdom_save = 0 if wisdom_save == '' else int(wisdom_save)
         self.charisma_save = 0 if charisma_save == '' else int(charisma_save)
-
-        self.strength_save = strength_save
-        self.dexterity_save = dexterity_save
-        self.constitution_save = constitution_save
-        self.intelligence_save = intelligence_save
-        self.wisdom_save = wisdom_save
-        self.charisma_save = charisma_save
 
         self.skills = skills
         self.damage_vulnerabilities = damage_vulnerabilities

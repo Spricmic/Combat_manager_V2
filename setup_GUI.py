@@ -1,5 +1,6 @@
 import tkinter as tk
 import csv
+import textwrap
 from combat_classes import Monster
 from combat_classes import Combatant
 
@@ -22,7 +23,7 @@ class CombatGUI:
         self.battle_listbox.pack(side=tk.RIGHT, fill=tk.BOTH, expand=True)
 
         # Create a listbox to display the stats of a preselected monster
-        self.stats_listbox = tk.Listbox(master, width=100, height=25)
+        self.stats_listbox = tk.Listbox(master, width=200, height=25)
         self.stats_listbox.pack(side=tk.BOTTOM, fill=tk.BOTH, expand=True)
 
         # Read the names of all monsters from monster.csv and add them to the listbox
@@ -53,19 +54,23 @@ class CombatGUI:
 
         # Create a button to add the selected monster to the battle list
         self.add_button = tk.Button(master, text="Add", command=self.add_to_battle)
-        self.add_button.pack()
+        self.add_button.pack(side="left", padx=10, pady=10)
 
         # Create a button to remove the selected monster from the battle list
         self.remove_button = tk.Button(master, text="Remove", command=self.remove_from_battle)
-        self.remove_button.pack()
+        self.remove_button.pack(side="right", padx=10, pady=10)
 
         # Create a button to safe the battle setup to a file
         self.safe_button = tk.Button(master, text="Safe", command=self.safe_battle_setup)
-        self.safe_button.pack()
+        self.safe_button.pack(side="right", padx=10, pady=10)
 
         # Create a button to start the battle
         self.start_button = tk.Button(master, text="Start", command=self.start_battle)
-        self.start_button.pack()
+        self.start_button.pack(side="left", padx=10, pady=10)
+
+        # Create a button to start the battle
+        self.choose_setup_button = tk.Button(master, text="Choose from setup", command=self.choose_battle_setup)
+        self.choose_setup_button.pack(side="left", padx=10, pady=10)
 
         self.master.after(500, self.check_monster_selection)
         self.master.after(500, self.check_battle_selection)
@@ -102,7 +107,34 @@ class CombatGUI:
             self.stats_listbox.insert(tk.END, "Intelligence: {}".format(monster.intelligence))
             self.stats_listbox.insert(tk.END, "Wisdom: {}".format(monster.wisdom))
             self.stats_listbox.insert(tk.END, "Charisma: {}".format(monster.charisma))
-            self.stats_listbox.insert(tk.END, "Challenge Rating: {}".format(monster.challenge_rating))
+            self.stats_listbox.insert(tk.END, "Strength Save: {}".format(monster.strength_save))
+            self.stats_listbox.insert(tk.END, "Dexterity Save: {}".format(monster.dexterity_save))
+            self.stats_listbox.insert(tk.END, "Constitution Save: {}".format(monster.constitution_save))
+            self.stats_listbox.insert(tk.END, "Intelligence Save: {}".format(monster.intelligence_save))
+            self.stats_listbox.insert(tk.END, "Wisdom Save: {}".format(monster.wisdom_save))
+            self.stats_listbox.insert(tk.END, "Charisma Save: {}".format(monster.charisma_save))
+            self.stats_listbox.insert(tk.END, "Strength Saving Throw: {}".format(monster.strength_save))
+            self.stats_listbox.insert(tk.END, "Dexterity Saving Throw: {}".format(monster.dexterity_save))
+            self.stats_listbox.insert(tk.END, "Constitution Saving Throw: {}".format(monster.constitution_save))
+            self.stats_listbox.insert(tk.END, "Intelligence Saving Throw: {}".format(monster.intelligence_save))
+            self.stats_listbox.insert(tk.END, "Wisdom Saving Throw: {}".format(monster.wisdom_save))
+            self.stats_listbox.insert(tk.END, "Charisma Saving Throw: {}".format(monster.charisma_save))
+            self.stats_listbox.insert(tk.END, "Skills: {}".format(monster.skills))
+            self.stats_listbox.insert(tk.END, "Damage Vulnerabilities: {}".format(monster.damage_vulnerabilities))
+            self.stats_listbox.insert(tk.END, "Damage Resistances: {}".format(monster.damage_resistances))
+            self.stats_listbox.insert(tk.END, "Damage Immunities: {}".format(monster.damage_immunities))
+            self.stats_listbox.insert(tk.END, "Condition Immunities: {}".format(monster.condition_immunities))
+            self.stats_listbox.insert(tk.END, "Senses: {}".format(monster.senses))
+            self.stats_listbox.insert(tk.END, "Actions: {}".format(monster.actions))
+            self.stats_listbox.insert(tk.END, "Reactions: {}".format(monster.reactions))
+            self.stats_listbox.insert(tk.END, "Legendary Description: {}".format(monster.legendary_desc))
+            self.stats_listbox.insert(tk.END, "Legendary Actions: {}".format(monster.legendary_actions))
+            self.stats_listbox.insert(tk.END, "Special Abilities: {}".format(monster.special_abilities))
+            self.stats_listbox.insert(tk.END, "Spell List: {}".format(monster.spell_list))
+            self.stats_listbox.insert(tk.END, "Pros: {}".format(monster.pros))
+            self.stats_listbox.insert(tk.END, "Status: {}".format(monster.status))
+            self.stats_listbox.insert(tk.END, "Initiative: {}".format(monster.initiative))
+
         else:
             # If the Monster object was not found, display an error message
             self.stats_listbox.delete(0, tk.END)
@@ -133,15 +165,18 @@ class CombatGUI:
             # Add the monster name to the battle listbox
             self.battle_listbox.insert(tk.END, monster_class.name)
 
-
     def remove_from_battle(self):
         # Get the selected monster name from the battle listbox
         selection = self.battle_listbox.curselection()
         if selection:
             # Remove the monster name from the battle listbox
             self.battle_listbox.delete(selection)
+            del self.battle_participants[selection[0]]
 
     def safe_battle_setup(self):
+        pass
+
+    def choose_battle_setup(self):
         pass
 
     def start_battle(self):
