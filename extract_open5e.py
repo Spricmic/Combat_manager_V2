@@ -8,6 +8,7 @@ attributes = ['name', 'size', 'pros', 'type', 'armor_class', 'hit_points', 'spee
               'senses', 'challenge_rating', 'actions', 'reactions', 'legendary_desc', 'legendary_actions',
               'special_abilities', 'spell_list']
 
+
 # Create a list to store the monster data
 monsters = []
 
