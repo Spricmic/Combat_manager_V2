@@ -3,11 +3,14 @@ import csv
 from combat_classes import Monster
 from combat_classes import Combatant
 
+MONSTER_LISTBOX = 1
+BATTLE_LISTBOX = 2
 
 class CombatGUI:
     def __init__(self, master):
         self.master = master
         self.monster_list = []
+        self.battle_participants = []
         master.title("DnD Combat Manager")
 
         # Create a listbox to display the names of all monsters
@@ -56,25 +59,33 @@ class CombatGUI:
         self.remove_button = tk.Button(master, text="Remove", command=self.remove_from_battle)
         self.remove_button.pack()
 
+        # Create a button to safe the battle setup to a file
+        self.safe_button = tk.Button(master, text="Safe", command=self.safe_battle_setup)
+        self.safe_button.pack()
+
         # Create a button to start the battle
         self.start_button = tk.Button(master, text="Start", command=self.start_battle)
         self.start_button.pack()
 
         self.master.after(500, self.check_monster_selection)
+        self.master.after(500, self.check_battle_selection)
 
-    def display_monster_stats(self, monster_name):
+    def display_monster_stats(self, monster_index, source):
         """
         Find monster object with the given index.
         and display the stats of the monster at this index.
-        :param monster_name:
-        :return:
+        :param monster_index: index of the monster in the .csv file
+        :param source: the source is either MONSTER_LISTBOX or BATTLE_LISTBOX
+        :return: None
         """
-        # Find the Monster object with the given name
-        monster = None
-        for m in self.monster_list:
-            if m.name == monster_name:
-                monster = m
-                break
+        # Find the Monster object with the given index
+        if source == MONSTER_LISTBOX:
+            monster = self.monster_list[monster_index]
+        elif source == BATTLE_LISTBOX:
+            monster = self.battle_participants[monster_index]
+        else:
+            print("ERROR: Monster not found!")
+            pass
 
         # If the Monster object was found, display its stats
         if monster:
@@ -100,19 +111,28 @@ class CombatGUI:
     def check_monster_selection(self):
         selection = self.monster_listbox.curselection()
         if selection:
-            monster_name = self.monster_listbox.get(selection[0])
-            self.display_monster_stats(monster_name)
+            monster_index = selection[0]
+            self.display_monster_stats(monster_index, MONSTER_LISTBOX)
         self.master.after(500, self.check_monster_selection)
+
+    def check_battle_selection(self):
+        selection = self.battle_listbox.curselection()
+        if selection:
+            monster_index = selection[0]
+            self.display_monster_stats(monster_index, BATTLE_LISTBOX)
+        self.master.after(500, self.check_battle_selection)
 
     def add_to_battle(self):
         # Get the selected monster name from the monster listbox
         selection = self.monster_listbox.curselection()
         if selection:
             index = selection[0]
-            monster_class = self.monster_listbox.get(index)
+            monster_class = self.monster_list[index]
+            self.battle_participants.append(monster_class)
 
             # Add the monster name to the battle listbox
-            self.battle_listbox.insert(tk.END, monster_class)
+            self.battle_listbox.insert(tk.END, monster_class.name)
+
 
     def remove_from_battle(self):
         # Get the selected monster name from the battle listbox
@@ -120,6 +140,9 @@ class CombatGUI:
         if selection:
             # Remove the monster name from the battle listbox
             self.battle_listbox.delete(selection)
+
+    def safe_battle_setup(self):
+        pass
 
     def start_battle(self):
         # Get the names of all monsters in the battle
