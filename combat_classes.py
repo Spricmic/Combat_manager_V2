@@ -78,7 +78,7 @@ class Monster:
         self.status = status
         self.initiative = initiative
 
-    def initiative(self):
+    def roll_initiative(self):
         self.initiative = random.randint(1, 20) + self.dexterity
 
     def cast_spell(self):

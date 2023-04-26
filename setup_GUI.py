@@ -3,16 +3,18 @@ import csv
 import textwrap
 from combat_classes import Monster
 from combat_classes import Combatant
+from combat_manager import CombatManager
 
 MONSTER_LISTBOX = 1
 BATTLE_LISTBOX = 2
 
-class CombatGUI:
+
+class SetupGUI:
     def __init__(self, master):
         self.master = master
         self.monster_list = []
         self.battle_participants = []
-        master.title("DnD Combat Manager")
+        master.title("DnD Combat Setup")
 
         # Create a listbox to display the names of all monsters
         self.monster_listbox = tk.Listbox(master, width=25, height=25)
@@ -72,8 +74,8 @@ class CombatGUI:
         self.choose_setup_button = tk.Button(master, text="Choose from setup", command=self.choose_battle_setup)
         self.choose_setup_button.pack(side="left", padx=10, pady=10)
 
-        self.master.after(500, self.check_monster_selection)
-        self.master.after(500, self.check_battle_selection)
+        self.check_monster_selection()
+        self.check_battle_selection()
 
     def display_monster_stats(self, monster_index, source):
         """
@@ -101,6 +103,7 @@ class CombatGUI:
             self.stats_listbox.insert(tk.END, "Armor Class: {}".format(monster.armor_class))
             self.stats_listbox.insert(tk.END, "Hit Points: {}".format(monster.hit_points))
             self.stats_listbox.insert(tk.END, "Speed: {}".format(monster.speed))
+            self.stats_listbox.insert(tk.END, "Challenge rating: {}".format(monster.challenge_rating))
             self.stats_listbox.insert(tk.END, "Strength: {}".format(monster.strength))
             self.stats_listbox.insert(tk.END, "Dexterity: {}".format(monster.dexterity))
             self.stats_listbox.insert(tk.END, "Constitution: {}".format(monster.constitution))
@@ -141,18 +144,24 @@ class CombatGUI:
             self.stats_listbox.insert(tk.END, "Error: Monster not found")
 
     def check_monster_selection(self):
+        """
+        checks if a monster has been choosen in the monster.listbox (left side of gui)
+        """
         selection = self.monster_listbox.curselection()
         if selection:
             monster_index = selection[0]
             self.display_monster_stats(monster_index, MONSTER_LISTBOX)
-        self.master.after(500, self.check_monster_selection)
+        self.monster_listbox.after(500, self.check_monster_selection)
 
     def check_battle_selection(self):
+        """
+        checks if a monster has been choosen in the battle.listbox (right side of gui)
+        """
         selection = self.battle_listbox.curselection()
         if selection:
             monster_index = selection[0]
             self.display_monster_stats(monster_index, BATTLE_LISTBOX)
-        self.master.after(500, self.check_battle_selection)
+        self.battle_listbox.after(500, self.check_battle_selection)
 
     def add_to_battle(self):
         # Get the selected monster name from the monster listbox
@@ -180,12 +189,27 @@ class CombatGUI:
         pass
 
     def start_battle(self):
-        # Get the names of all monsters in the battle
-        monster_names = [self.battle_listbox.get(idx) for idx in range(self.battle_listbox.size())]
-
-        # TODO: add code to get the stats of the selected monsters and start the battle
+        """
+        rolls initiative for all the monsters
+        initalize the combat_manger
+        :Arg passing_function: Function to execute with self.battle_participants as argument
+        """
+        for participant in self.battle_participants:
+            if isinstance(participant, Monster):
+                participant.roll_initiative()
+            else:
+                pass
+        # Destroy the current window
+        if self.master:
+            self.master.after_cancel(self.check_monster_selection)
+            self.master.after_cancel(self.check_battle_selection)
+        self.master.destroy()
+        # Create a new window for the combat manager
+        root = tk.Tk()
+        combat_gui = CombatManager(root, self.battle_participants)
+        root.mainloop()
 
 
 root = tk.Tk()
-gui = CombatGUI(root)
+setup_gui = SetupGUI(root)
 root.mainloop()
