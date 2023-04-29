@@ -16,6 +16,16 @@ class SetupGUI:
         self.battle_participants = []
         master.title("DnD Combat Setup")
 
+        # Create a label and entry widget to search for monsters
+        search_frame = tk.Frame(master)
+        search_frame.pack(side=tk.TOP, fill=tk.X)
+        search_label = tk.Label(search_frame, text="Search for monster:")
+        search_label.pack(side=tk.LEFT, padx=10, pady=10)
+        self.search_entry = tk.Entry(search_frame, width=25)
+        self.search_entry.pack(side=tk.LEFT, padx=5, pady=10)
+        search_button = tk.Button(search_frame, text="Search", command=self.search_monster)
+        search_button.pack(side=tk.LEFT, padx=5, pady=10)
+
         # Create a listbox to display the names of all monsters
         self.monster_listbox = tk.Listbox(master, width=25, height=25)
         self.monster_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
@@ -55,24 +65,28 @@ class SetupGUI:
                 self.monster_listbox.insert(tk.END, monster.name)
 
         # Create a button to add the selected monster to the battle list
-        self.add_button = tk.Button(master, text="Add", command=self.add_to_battle)
+        self.add_button = tk.Button(master, text="Add Monster", command=self.add_to_battle)
         self.add_button.pack(side="left", padx=10, pady=10)
+
+        # create a button to add a player to the battle
+        self.add_player_button = tk.Button(master, text="Add Player", command=self.add_player)
+        self.add_player_button.pack(side="left", padx=10, pady=10)
 
         # Create a button to remove the selected monster from the battle list
         self.remove_button = tk.Button(master, text="Remove", command=self.remove_from_battle)
         self.remove_button.pack(side="right", padx=10, pady=10)
 
-        # Create a button to safe the battle setup to a file
-        self.safe_button = tk.Button(master, text="Safe", command=self.safe_battle_setup)
-        self.safe_button.pack(side="right", padx=10, pady=10)
-
         # Create a button to start the battle
         self.start_button = tk.Button(master, text="Start", command=self.start_battle)
-        self.start_button.pack(side="left", padx=10, pady=10)
+        self.start_button.pack(side="right", padx=10, pady=10)
 
         # Create a button to start the battle
         self.choose_setup_button = tk.Button(master, text="Choose from setup", command=self.choose_battle_setup)
         self.choose_setup_button.pack(side="left", padx=10, pady=10)
+
+        # Create a button to safe the battle setup to a file
+        self.safe_button = tk.Button(master, text="Safe", command=self.safe_battle_setup)
+        self.safe_button.pack(side="left", padx=10, pady=10)
 
         self.check_monster_selection()
         self.check_battle_selection()
@@ -151,7 +165,7 @@ class SetupGUI:
         if selection:
             monster_index = selection[0]
             self.display_monster_stats(monster_index, MONSTER_LISTBOX)
-        self.monster_listbox.after(500, self.check_monster_selection)
+        self.master.after(500, self.check_monster_selection)
 
     def check_battle_selection(self):
         """
@@ -161,10 +175,13 @@ class SetupGUI:
         if selection:
             monster_index = selection[0]
             self.display_monster_stats(monster_index, BATTLE_LISTBOX)
-        self.battle_listbox.after(500, self.check_battle_selection)
+        self.master.after(500, self.check_battle_selection)
 
     def add_to_battle(self):
-        # Get the selected monster name from the monster listbox
+        """
+        inizalise the Monster class by the date of the selcted monster.
+        Add the Monster to battle_participants list
+        """
         selection = self.monster_listbox.curselection()
         if selection:
             index = selection[0]
@@ -175,12 +192,26 @@ class SetupGUI:
             self.battle_listbox.insert(tk.END, monster_class.name)
 
     def remove_from_battle(self):
+        """
+        remove the monster from battle_listbox and battle_participants
+        """
         # Get the selected monster name from the battle listbox
         selection = self.battle_listbox.curselection()
         if selection:
             # Remove the monster name from the battle listbox
             self.battle_listbox.delete(selection)
             del self.battle_participants[selection[0]]
+
+    def search_monster(self):
+        search_term = self.search_entry.get().lower()
+        if not search_term:
+            return
+        self.monster_listbox.selection_clear(0, tk.END)
+        for i, monster in enumerate(self.monster_list):
+            if search_term in monster.name.lower():
+                self.monster_listbox.selection_set(i)
+                self.monster_listbox.see(i)
+                break
 
     def safe_battle_setup(self):
         pass
@@ -209,6 +240,12 @@ class SetupGUI:
         combat_gui = CombatManager(root, self.battle_participants)
         root.mainloop()
 
+    def add_player(self):
+        """
+        add a new player to the player_list
+        """
+        # Create a new window for the player setup
+        pass
 
 root = tk.Tk()
 setup_gui = SetupGUI(root)

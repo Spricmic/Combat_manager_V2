@@ -27,7 +27,7 @@ class Combatant:
         self.initiative = initiative
         self.status = status
 
-    def roll_initiative(self, initiative_player):
+    def player_initiative(self, initiative_player):
         self.initiative = initiative_player
 
 
